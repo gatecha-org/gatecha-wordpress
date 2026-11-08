@@ -2,7 +2,7 @@
 
 <!-- impeccable:product-schema 1 -->
 
-<!-- Copy of GateCHA/PRODUCT.md (github.com/Upellift99/GateCHA), the canonical
+<!-- Copy of GateCHA/PRODUCT.md (github.com/gatecha-org/gatecha), the canonical
      version. Do not edit here: change it there, then re-copy. -->
 
 ## Platform

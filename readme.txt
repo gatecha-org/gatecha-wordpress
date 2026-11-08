@@ -151,11 +151,11 @@ One more service is contacted only if an administrator clicks **Use GateCHA Clou
 
 No data is sent to any third-party service. All communication is between your WordPress installation and your own GateCHA instance at the URL you configure in Settings → GateCHA.
 
-* GateCHA source code: [https://github.com/Upellift99/GateCHA](https://github.com/Upellift99/GateCHA)
+* GateCHA source code: [https://github.com/gatecha-org/gatecha](https://github.com/gatecha-org/gatecha)
 
 == Source Code ==
 
-The full source of this plugin is available at [https://github.com/Upellift99/GateCHA-WordPress](https://github.com/Upellift99/GateCHA-WordPress).
+The full source of this plugin is available at [https://github.com/gatecha-org/gatecha-wordpress](https://github.com/gatecha-org/gatecha-wordpress).
 
 The plugin's own JavaScript (`assets/js/gatecha.js`) and CSS (`assets/css/gatecha.css`) are shipped unminified and human-readable.
 
