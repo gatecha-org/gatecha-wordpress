@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GateCHA CAPTCHA
  * Plugin URI:  https://gatecha.org/wordpress
- * Description: Self-hosted ALTCHA proof-of-work CAPTCHA via GateCHA. Protects WordPress forms without cookies, fingerprinting, or third-party services.
+ * Description: Privacy-friendly reCAPTCHA alternative: invisible proof-of-work CAPTCHA, no cookies, GDPR-friendly. Free Cloud trial, or host it yourself.
  * Author:      GateCHA
  * Author URI:  https://gatecha.org
  * Version:     1.5.0
@@ -99,6 +99,12 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function ( $li
 		. esc_html__( 'Settings', 'gatecha-captcha' )
 		. '</a>';
 	array_unshift( $links, $settings_link );
+	// While no server is set, point at the offer on the settings page.
+	if ( GateCHA::$instance && ! GateCHA::$instance->is_configured() ) {
+		$links[] = '<a href="' . esc_url( admin_url( 'options-general.php?page=gatecha_admin#gatecha-cloud-offer' ) ) . '"><strong>'
+			. esc_html__( 'Free Cloud trial', 'gatecha-captcha' )
+			. '</strong></a>';
+	}
 	return $links;
 } );
 

@@ -27,13 +27,22 @@ add_action( 'admin_menu', function () {
  */
 add_action( 'admin_init', function () {
 
+	// Form checkboxes do nothing without a server: they are greyed out until
+	// the URL and API key are set (or typed in, see gatecha_options_page_html()).
+	$has_server = GateCHA::$instance->is_configured();
+
 	/*--------------------------------------------------------------
 	 * General section
 	 *-------------------------------------------------------------*/
 	add_settings_section(
 		'gatecha_section_general',
 		__( 'General Settings', 'gatecha-captcha' ),
-		function () {
+		function () use ( $has_server ) {
+			if ( ! $has_server ) {
+				echo '<div class="notice notice-warning inline gatecha-unprotected"><p><strong>' . esc_html__( 'Not protecting any form yet: no GateCHA server is set.', 'gatecha-captcha' ) . '</strong> '
+					. esc_html__( 'Start the GateCHA Cloud trial above, or enter the URL and API key of your own GateCHA server below. The form options unlock once both are set.', 'gatecha-captcha' ) . '</p></div>';
+				return;
+			}
 			echo '<p>' . esc_html__( 'Enter the URL of your GateCHA instance and the API key.', 'gatecha-captcha' ) . '</p>';
 		},
 		'gatecha_admin'
@@ -199,7 +208,8 @@ add_action( 'admin_init', function () {
 		'gatecha_admin',
 		'gatecha_section_his',
 		array(
-			'name' => GateCHA::$option_his_enabled,
+			'name'         => GateCHA::$option_his_enabled,
+			'needs_server' => true,
 			'hint' => __( 'Load the collector from your GateCHA instance and send the aggregates along with each verification. On its own this changes nothing about who gets through: scores are recorded, never enforced.', 'gatecha-captcha' ),
 		)
 	);
@@ -217,7 +227,8 @@ add_action( 'admin_init', function () {
 		'gatecha_admin',
 		'gatecha_section_his',
 		array(
-			'name' => GateCHA::$option_his_block,
+			'name'         => GateCHA::$option_his_block,
+			'needs_server' => true,
 			'hint' => __( 'Fail verification when GateCHA flags a submission as automated. Needs the setting above. Turn it on once you have watched your own scores for a few days: a false positive here is silent, the visitor simply cannot submit and never tells you.', 'gatecha-captcha' ),
 		)
 	);
@@ -254,7 +265,10 @@ add_action( 'admin_init', function () {
 			'gatecha_settings_checkbox_callback',
 			'gatecha_admin',
 			'gatecha_section_wordpress',
-			array( 'name' => $option_name )
+			array(
+				'name'         => $option_name,
+				'needs_server' => true,
+			)
 		);
 	}
 
@@ -294,8 +308,9 @@ add_action( 'admin_init', function () {
 			'gatecha_admin',
 			'gatecha_section_woocommerce',
 			array(
-				'name'     => $option_name,
-				'disabled' => ! $wc_active,
+				'name'         => $option_name,
+				'disabled'     => ! $wc_active,
+				'needs_server' => true,
 			)
 		);
 	}
@@ -359,9 +374,10 @@ add_action( 'admin_init', function () {
 			'gatecha_admin',
 			'gatecha_section_integrations',
 			array(
-				'name'     => $option_name,
-				'disabled' => ! $active,
-				'hint'     => $active ? '' : __( 'Plugin not active.', 'gatecha-captcha' ),
+				'name'         => $option_name,
+				'disabled'     => ! $active,
+				'needs_server' => true,
+				'hint'         => $active ? '' : __( 'Plugin not active.', 'gatecha-captcha' ),
 			)
 		);
 	}
@@ -481,6 +497,10 @@ function gatecha_settings_select_callback( array $args ) {
 function gatecha_settings_checkbox_callback( array $args ) {
 	$name     = $args['name'];
 	$disabled = ! empty( $args['disabled'] );
+	// Locked only for want of a server: the settings page script unlocks it
+	// as soon as a URL and an API key are typed in. A box disabled for another
+	// reason (form plugin not active) stays disabled.
+	$locked   = ! $disabled && ! empty( $args['needs_server'] ) && ! GateCHA::$instance->is_configured();
 	$hint     = isset( $args['hint'] ) ? $args['hint'] : '';
 	$value    = (int) get_option( $name, 0 );
 	?>
@@ -491,7 +511,8 @@ function gatecha_settings_checkbox_callback( array $args ) {
 			   value="1"
 			   <?php gatecha_settings_describedby( $name, $hint ); ?>
 			   <?php checked( 1, $value ); ?>
-			   <?php disabled( $disabled ); ?>>
+			   <?php echo $locked ? 'data-gatecha-needs-server="1"' : ''; ?>
+			   <?php disabled( $disabled || $locked ); ?>>
 		<span class="screen-reader-text"><?php echo esc_html( gatecha_settings_field_context( $name ) ); ?>: </span>
 		<?php esc_html_e( 'Enable', 'gatecha-captcha' ); ?>
 	</label>
@@ -572,6 +593,19 @@ function gatecha_options_page_html() {
 			submit_button();
 			?>
 		</form>
+
+		<?php
+		if ( ! GateCHA::$instance->is_configured() ) {
+			// Unlock the form checkboxes once both server fields are filled in,
+			// so a self-hosted setup can be saved in one go.
+			wp_print_inline_script_tag(
+				'(function(){var u=document.getElementById(' . wp_json_encode( GateCHA::$option_url ) . '),k=document.getElementById(' . wp_json_encode( GateCHA::$option_api_key ) . ');'
+				. 'if(!u||!k){return;}var b=document.querySelectorAll("[data-gatecha-needs-server]");'
+				. 'function s(){var on=u.value.trim()!==""&&k.value.trim()!=="";for(var i=0;i<b.length;i++){b[i].disabled=!on;}}'
+				. 'u.addEventListener("input",s);k.addEventListener("input",s);s();})();'
+			);
+		}
+		?>
 
 		<p class="description">
 			<?php

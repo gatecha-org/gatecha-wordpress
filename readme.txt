@@ -1,6 +1,6 @@
 === GateCHA CAPTCHA ===
 Contributors: gatecha
-Tags: captcha, gatecha, altcha, spam, proof-of-work
+Tags: captcha, recaptcha, anti-spam, gdpr, contact form 7
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -8,13 +8,18 @@ Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Self-hosted ALTCHA proof-of-work CAPTCHA via GateCHA. Protects WordPress forms without cookies, fingerprinting, or third-party services.
+Privacy-friendly reCAPTCHA alternative: invisible proof-of-work CAPTCHA, no cookies, GDPR-friendly. Free Cloud trial, or host it yourself.
 
 == Description ==
 
-GateCHA CAPTCHA connects your WordPress site to your own [GateCHA](https://gatecha.org) instance — a self-hosted, open-source CAPTCHA management service based on the ALTCHA proof-of-work protocol.
+GateCHA CAPTCHA stops spam bots on your WordPress forms without image puzzles, cookies or Google. Visitors see a checkbox that ticks itself once they start filling the form in: their browser solves a small proof-of-work puzzle in the background, and your server checks the answer with [GateCHA](https://gatecha.org), an open-source CAPTCHA service based on the ALTCHA protocol.
 
-No server? Every feature of the plugin works with a GateCHA you host yourself, for free. If you would rather not run one, the optional **GateCHA Cloud** service, for businesses, hosts it for you in France: one click in Settings → GateCHA, and you come back with everything filled in.
+**Two ways to get started, same plugin, same features:**
+
+* **GateCHA Cloud, free 30-day trial, no card needed.** Click **Start free 30-day trial** in Settings → GateCHA, sign up in a minute, and you come back with everything filled in and your login and comments protected. A paid service for businesses after the trial, hosted in France.
+* **Host it yourself, free.** GateCHA is open source (MIT) and runs in a single Docker container. Enter its URL and API key in Settings → GateCHA.
+
+Nothing in the plugin is locked behind the paid service.
 
 **Why GateCHA?**
 
@@ -37,25 +42,28 @@ No server? Every feature of the plugin works with a GateCHA you host yourself, f
 * HTML Forms
 * Custom placement via `[gatecha]` shortcode
 
-**Setup in 2 steps:**
+**Setup in a minute:**
 
-1. Enter your GateCHA instance URL
-2. Enter your API key
+1. Activate the plugin and open Settings → GateCHA
+2. Click **Start free 30-day trial**, or enter your own GateCHA URL and API key
 
-That's it. Enable CAPTCHA on the forms you want to protect.
+With the trial, your login and comments are protected as soon as you come back. Enable CAPTCHA on any other form you want to protect.
 
 == Installation ==
 
-1. Upload the `gatecha-captcha` folder to `/wp-content/plugins/`
+1. Install the plugin from **Plugins → Add New**, or upload the `gatecha-captcha` folder to `/wp-content/plugins/`
 2. Activate the plugin through the Plugins menu
-3. Go to **Settings → GateCHA**
-4. Enter your GateCHA URL and API key
-5. Enable CAPTCHA on the forms you want to protect
+3. Go to **Settings → GateCHA** and pick one:
+    * **GateCHA Cloud:** click **Start free 30-day trial** and sign up. The URL, API key and stats token are filled in for you, and the login and comments are protected.
+    * **Your own server:** enter your GateCHA URL and API key.
+4. Enable CAPTCHA on any other form you want to protect
 
 **Requirements:**
 
-* A running [GateCHA](https://gatecha.org) instance
-* An API key from your GateCHA dashboard (starts with `gk_`)
+A GateCHA server, either one:
+
+* GateCHA Cloud (free 30-day trial, then paid, for businesses)
+* Your own [GateCHA](https://gatecha.org) instance, free and open source, with an API key from its dashboard (starts with `gk_`)
 
 == Frequently Asked Questions ==
 
@@ -77,7 +85,7 @@ Only to the GateCHA server you configure: your own instance, or GateCHA Cloud if
 
 = What is GateCHA Cloud? =
 
-An optional paid service for businesses (companies, freelancers, agencies) that runs the GateCHA server for you, hosted in France, with a free 30-day trial and no card needed. The plugin offers it on Settings → GateCHA only while no server is configured, next to the free self-hosted option, and contacts it only when you click **Use GateCHA Cloud**. Nothing in the plugin is locked behind it: a self-hosted GateCHA gives you every feature.
+An optional paid service for businesses (companies, freelancers, agencies) that runs the GateCHA server for you, hosted in France, with a free 30-day trial and no card needed. The plugin offers it only while no server is configured: on Settings → GateCHA, next to the free self-hosted option, and in a notice on the Plugins screen and the Dashboard that you can dismiss for good. It contacts the service only when you click **Start free 30-day trial**. Nothing in the plugin is locked behind it: a self-hosted GateCHA gives you every feature.
 
 = What are interaction signals? =
 
@@ -126,9 +134,13 @@ The plugin will accept the token as a valid verification without contacting the 
 
 == Screenshots ==
 
-1. The GateCHA server dashboard leads with what needs attention: a key failing today is named with its numbers, above the day's verifications and every site's key grouped by status.
+1. Settings → GateCHA right after activation: start a free GateCHA Cloud trial, or use your own server.
 
-2. One API key per site, each with its own difficulty, challenge TTL and allowed domains, so a single GateCHA instance serves every site you run.
+2. The WordPress login protected by GateCHA: the check runs on its own, no puzzle to solve.
+
+3. The GateCHA server dashboard leads with what needs attention: a key failing today is named with its numbers, above the day's verifications and every site's key grouped by status.
+
+4. One API key per site, each with its own difficulty, challenge TTL and allowed domains, so a single GateCHA instance serves every site you run.
 
 == External Services ==
 
@@ -145,7 +157,7 @@ One more request happens only when a **Stats Token** is saved in the settings, w
 
 4. **GET /api/v1/stats** — Called from your WordPress server, at most once every 10 minutes and only when an administrator opens the WordPress dashboard or Settings → GateCHA, to read this key's statistics (counts of challenges, verified and failed submissions per day, and per country). It sends the stats token and nothing about your visitors.
 
-One more service is contacted only if an administrator clicks **Use GateCHA Cloud** on Settings → GateCHA:
+One more service is contacted only if an administrator clicks **Start free 30-day trial**, on Settings → GateCHA or in the setup notice shown while no server is configured:
 
 5. **GateCHA Cloud** (cloud.gatecha.com), the optional hosted GateCHA. The click sends the admin's browser there with this site's address, a return address in this site's admin and a random value that protects the round trip. After sign-up and payment on that service (payments are processed by Stripe), the browser comes back with a one-time code, and your WordPress server exchanges it with cloud.gatecha.com for the GateCHA URL, API key and stats token, which it saves in the settings. From then on, GateCHA Cloud is the GateCHA server of items 1 to 4. Terms: https://gatecha.com/cgv — Privacy policy: https://gatecha.com/confidentialite
 

@@ -116,6 +116,22 @@ server-side on `POST {cloud}/connect/exchange` for `gatecha_url`, `api_key`,
 or the `gatecha_cloud_url` filter (tests). The service lives in the private
 `gatecha-cloud` repository.
 
+While no server is set the plugin protects nothing, so it says so in three
+places, all hidden once a URL and key are saved: a notice on the Plugins
+screen and the Dashboard only (screen ids `plugins`, `dashboard`), dismissed
+for good per admin through `admin-post.php?action=gatecha_dismiss_setup`
+(nonce, user meta `gatecha_setup_notice_dismissed`, removed on uninstall); a
+"Free Cloud trial" action link in the plugin list; and a warning above the
+General settings. The form checkboxes (WordPress, WooCommerce, integrations,
+interaction signals) are disabled meanwhile and carry
+`data-gatecha-needs-server`; an inline script on the settings page unlocks
+them as soon as both the URL and API key fields are filled in, so a
+self-hosted setup still saves in one go. A box disabled because its form
+plugin is inactive stays disabled.
+
+On a successful Cloud return, `protect_defaults()` switches on WordPress login,
+comments and (if active) WooCommerce login. It only ever turns options on.
+
 ## Failure mode
 
 `gatecha_fail_mode`, `closed` by default. In `open` mode, `gatecha.js` replaces

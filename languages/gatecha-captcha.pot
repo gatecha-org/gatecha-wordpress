@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-24T21:20:25+00:00\n"
+"POT-Creation-Date: 2026-11-08T17:57:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: gatecha-captcha\n"
@@ -17,7 +17,7 @@ msgstr ""
 #. Plugin Name of the plugin
 #: gatecha-captcha.php
 #: includes/class-gatecha-admin.php:17
-#: includes/class-gatecha-admin.php:523
+#: includes/class-gatecha-admin.php:544
 #: includes/class-gatecha-stats.php:77
 msgid "GateCHA CAPTCHA"
 msgstr ""
@@ -29,7 +29,7 @@ msgstr ""
 
 #. Description of the plugin
 #: gatecha-captcha.php
-msgid "Self-hosted ALTCHA proof-of-work CAPTCHA via GateCHA. Protects WordPress forms without cookies, fingerprinting, or third-party services."
+msgid "Privacy-friendly reCAPTCHA alternative: invisible proof-of-work CAPTCHA, no cookies, GDPR-friendly. Free Cloud trial, or host it yourself."
 msgstr ""
 
 #. Author of the plugin
@@ -45,253 +45,290 @@ msgid "https://gatecha.org"
 msgstr ""
 
 #: gatecha-captcha.php:99
-#: includes/class-gatecha-admin.php:534
+#: includes/class-gatecha-admin.php:555
 msgid "Settings"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:35
+#: gatecha-captcha.php:105
+msgid "Free Cloud trial"
+msgstr ""
+
+#: includes/class-gatecha-admin.php:39
 msgid "General Settings"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:37
+#: includes/class-gatecha-admin.php:42
+msgid "Not protecting any form yet: no GateCHA server is set."
+msgstr ""
+
+#: includes/class-gatecha-admin.php:43
+msgid "Start the GateCHA Cloud trial above, or enter the URL and API key of your own GateCHA server below. The form options unlock once both are set."
+msgstr ""
+
+#: includes/class-gatecha-admin.php:46
 msgid "Enter the URL of your GateCHA instance and the API key."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:52
+#: includes/class-gatecha-admin.php:61
 msgid "GateCHA URL"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:60
+#: includes/class-gatecha-admin.php:69
 msgid "Example: https://gatecha.example.com"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:72
+#: includes/class-gatecha-admin.php:81
 msgid "API Key"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:80
+#: includes/class-gatecha-admin.php:89
 msgid "Your GateCHA API key (starts with gk_)."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:92
+#: includes/class-gatecha-admin.php:101
 msgid "The stats token starts with gs_. The previous value was kept."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:103
+#: includes/class-gatecha-admin.php:112
 msgid "Stats Token"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:111
+#: includes/class-gatecha-admin.php:120
 msgid "Optional. Shows your CAPTCHA statistics in WordPress. Generate it on the key's page in your GateCHA dashboard (starts with gs_)."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:125
+#: includes/class-gatecha-admin.php:134
 msgid "Failure Mode"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:133
+#: includes/class-gatecha-admin.php:142
 msgid "Fail closed — block submissions when server is unreachable"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:134
+#: includes/class-gatecha-admin.php:143
 msgid "Fail open — allow submissions when server is unreachable"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:136
+#: includes/class-gatecha-admin.php:145
 msgid "Determines how forms behave if the GateCHA server cannot be reached. \"Fail closed\" is safer but may block legitimate users during an outage."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:148
+#: includes/class-gatecha-admin.php:157
 msgid "Auto Verify"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:154
+#: includes/class-gatecha-admin.php:163
 msgid "Automatically start verification when the user focuses the form. When disabled, the user must click the checkbox manually."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:166
+#: includes/class-gatecha-admin.php:175
 msgid "Hide Branding"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:172
+#: includes/class-gatecha-admin.php:181
 msgid "Hide the ALTCHA logo and \"Protected by ALTCHA\" footer. Keeping branding visible is recommended."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:181
+#: includes/class-gatecha-admin.php:190
 msgid "Interaction Signals"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:183
+#: includes/class-gatecha-admin.php:192
 msgid "Proof-of-work proves a browser did the work. It does not prove a human filled the form in. Interaction signals add a second opinion: how the form was filled, as counts and durations only. Never what was typed, never pointer coordinates, never an IP address."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:184
+#: includes/class-gatecha-admin.php:193
 msgid "Requires GateCHA 0.7.0 or later. Scores show up on your dashboard under HIS Monitor."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:197
+#: includes/class-gatecha-admin.php:206
 msgid "Collect Interaction Signals"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:203
+#: includes/class-gatecha-admin.php:213
 msgid "Load the collector from your GateCHA instance and send the aggregates along with each verification. On its own this changes nothing about who gets through: scores are recorded, never enforced."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:215
+#: includes/class-gatecha-admin.php:225
 msgid "Reject Suspected Automation"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:221
+#: includes/class-gatecha-admin.php:232
 msgid "Fail verification when GateCHA flags a submission as automated. Needs the setting above. Turn it on once you have watched your own scores for a few days: a false positive here is silent, the visitor simply cannot submit and never tells you."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:230
+#: includes/class-gatecha-admin.php:241
 msgid "WordPress"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:232
+#: includes/class-gatecha-admin.php:243
 msgid "Enable CAPTCHA on built-in WordPress forms."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:238
-#: includes/class-gatecha-admin.php:278
+#: includes/class-gatecha-admin.php:249
+#: includes/class-gatecha-admin.php:292
 msgid "Login"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:239
-#: includes/class-gatecha-admin.php:279
+#: includes/class-gatecha-admin.php:250
+#: includes/class-gatecha-admin.php:293
 msgid "Registration"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:240
-#: includes/class-gatecha-admin.php:280
+#: includes/class-gatecha-admin.php:251
+#: includes/class-gatecha-admin.php:294
 msgid "Password Reset"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:241
+#: includes/class-gatecha-admin.php:252
 msgid "Comments"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:268
+#: includes/class-gatecha-admin.php:282
 msgid "WooCommerce"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:271
+#: includes/class-gatecha-admin.php:285
 msgid "WooCommerce is not active."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:308
+#: includes/class-gatecha-admin.php:323
 msgid "Integrations"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:310
+#: includes/class-gatecha-admin.php:325
 msgid "Enable CAPTCHA on third-party form plugins."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:317
+#: includes/class-gatecha-admin.php:332
 msgid "Contact Form 7"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:321
+#: includes/class-gatecha-admin.php:336
 msgid "WPForms"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:325
+#: includes/class-gatecha-admin.php:340
 msgid "Gravity Forms"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:329
+#: includes/class-gatecha-admin.php:344
 msgid "Elementor Pro Forms"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:333
+#: includes/class-gatecha-admin.php:348
 msgid "Forminator"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:337
+#: includes/class-gatecha-admin.php:352
 msgid "Formidable Forms"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:341
+#: includes/class-gatecha-admin.php:356
 msgid "HTML Forms"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:364
+#: includes/class-gatecha-admin.php:380
 msgid "Plugin not active."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:496
+#: includes/class-gatecha-admin.php:517
 msgid "Enable"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:518
+#: includes/class-gatecha-admin.php:539
 msgid "fail open (submissions allowed)"
 msgstr ""
 
-#: includes/class-gatecha-admin.php:519
+#: includes/class-gatecha-admin.php:540
 msgid "fail closed (submissions blocked)"
 msgstr ""
 
 #. translators: 1: error detail, 2: human-readable time ago, 3: current failure mode
-#: includes/class-gatecha-admin.php:527
+#: includes/class-gatecha-admin.php:548
 #, php-format
 msgid "Server unreachable (%1$s). Last error %2$s ago. Current mode: %3$s."
 msgstr ""
 
-#: includes/class-gatecha-admin.php:562
+#: includes/class-gatecha-admin.php:583
 msgid "Statistics"
 msgstr ""
 
 #. translators: %s: plugin version number
-#: includes/class-gatecha-admin.php:580
+#: includes/class-gatecha-admin.php:614
 #, php-format
 msgid "GateCHA CAPTCHA for WordPress — v%s"
 msgstr ""
 
-#: includes/class-gatecha-cloud.php:76
-msgid "No GateCHA server yet?"
-msgstr ""
-
-#: includes/class-gatecha-cloud.php:77
-msgid "This plugin checks your forms through a GateCHA server. Host one yourself, free and open source, or let us host it for you."
-msgstr ""
-
-#: includes/class-gatecha-cloud.php:81
-msgid "Use GateCHA Cloud"
-msgstr ""
-
-#: includes/class-gatecha-cloud.php:82
-msgid "Host it yourself (free)"
-msgstr ""
-
-#: includes/class-gatecha-cloud.php:85
-msgid "GateCHA Cloud is a paid service for businesses, hosted in France, with a free 30-day trial and no card needed. You come back here with everything filled in."
+#: includes/class-gatecha-cloud.php:89
+msgid "Start free 30-day trial"
 msgstr ""
 
 #. translators: %s: host name of the GateCHA Cloud service
-#: includes/class-gatecha-cloud.php:89
+#: includes/class-gatecha-cloud.php:101
 #, php-format
 msgid "Clicking sends this site's address to %s to start the sign-up; nothing is sent before."
 msgstr ""
 
-#: includes/class-gatecha-cloud.php:103
-#: includes/class-gatecha-cloud.php:128
+#: includes/class-gatecha-cloud.php:112
+msgid "No GateCHA server yet?"
+msgstr ""
+
+#: includes/class-gatecha-cloud.php:113
+msgid "This plugin checks your forms through a GateCHA server. Let us host it for you, or host one yourself, free and open source."
+msgstr ""
+
+#: includes/class-gatecha-cloud.php:116
+msgid "Host it yourself (free)"
+msgstr ""
+
+#: includes/class-gatecha-cloud.php:118
+msgid "No card needed."
+msgstr ""
+
+#: includes/class-gatecha-cloud.php:118
+msgid "Sign up in a minute and you come back here with everything filled in and your login and comments protected."
+msgstr ""
+
+#: includes/class-gatecha-cloud.php:120
+msgid "GateCHA Cloud is a paid service for businesses after the trial, hosted in France."
+msgstr ""
+
+#: includes/class-gatecha-cloud.php:148
+msgid "GateCHA CAPTCHA is not protecting any form yet."
+msgstr ""
+
+#: includes/class-gatecha-cloud.php:149
+msgid "It needs a GateCHA server: start a free 30-day GateCHA Cloud trial, no card needed, or use your own server."
+msgstr ""
+
+#: includes/class-gatecha-cloud.php:154
+msgid "Use my own server"
+msgstr ""
+
+#: includes/class-gatecha-cloud.php:155
+msgid "Dismiss"
+msgstr ""
+
+#: includes/class-gatecha-cloud.php:168
+#: includes/class-gatecha-cloud.php:181
+#: includes/class-gatecha-cloud.php:206
 msgid "You are not allowed to do this."
 msgstr ""
 
-#: includes/class-gatecha-cloud.php:195
-msgid "Connected to GateCHA Cloud. Choose below which forms to protect, then save."
+#: includes/class-gatecha-cloud.php:289
+msgid "Connected to GateCHA Cloud. Your login and comments are protected from now on. Tick any other form to protect below, then save."
 msgstr ""
 
-#: includes/class-gatecha-cloud.php:196
+#: includes/class-gatecha-cloud.php:290
 msgid "The connection could not be confirmed: it expired, or was started from another browser. Start again."
 msgstr ""
 
-#: includes/class-gatecha-cloud.php:197
+#: includes/class-gatecha-cloud.php:291
 msgid "GateCHA Cloud could not be reached to finish the connection. Start again in a few minutes, or paste the values from your confirmation email."
 msgstr ""
 
-#: includes/class-gatecha-cloud.php:198
+#: includes/class-gatecha-cloud.php:292
 msgid "GateCHA Cloud did not confirm the connection. Start again, or paste the values from your confirmation email."
 msgstr ""
 
