@@ -43,3 +43,6 @@ foreach ( $gatecha_options as $gatecha_option ) {
 delete_transient( 'gatecha_last_server_error' );
 delete_transient( 'gatecha_stats_cache' );
 delete_transient( 'gatecha_outage_probe' );
+
+// Per-administrator flag set by dismissing the "not protecting any form yet" notice.
+delete_metadata( 'user', 0, 'gatecha_setup_notice_dismissed', '', true );

@@ -1,9 +1,10 @@
 <?php
 /**
- * "Use GateCHA Cloud": connect the plugin to a hosted GateCHA instance.
+ * "Start free 30-day trial": connect the plugin to a hosted GateCHA instance.
  *
- * Optional, and only offered on Settings → GateCHA while no server is set.
- * Nothing is sent anywhere until an administrator clicks the button: the
+ * Optional, and only offered while no server is set: on Settings → GateCHA,
+ * and in a one-time, dismissible notice on the Plugins screen and the
+ * Dashboard. Nothing is sent anywhere until an administrator clicks: the
  * plugin then sends the admin to cloud.gatecha.com with this site's address,
  * a return URL in this admin and a random state. After sign-up the admin comes
  * back with a one-time code, which this server exchanges for the GateCHA URL,
@@ -36,6 +37,13 @@ class GateCHA_Cloud {
 	const STATE_TTL = 1800;
 
 	/**
+	 * User meta set once an administrator dismisses the setup notice.
+	 *
+	 * @var string
+	 */
+	const DISMISSED = 'gatecha_setup_notice_dismissed';
+
+	/**
 	 * Hook the two admin-post endpoints and the result notice.
 	 */
 	public static function init() {
@@ -44,6 +52,8 @@ class GateCHA_Cloud {
 		// Back from sign-up with an expired session: log in, then land here again.
 		add_action( 'admin_post_nopriv_gatecha_cloud_callback', 'auth_redirect' );
 		add_action( 'admin_notices', array( __CLASS__, 'notice' ) );
+		add_action( 'admin_notices', array( __CLASS__, 'setup_notice' ) );
+		add_action( 'admin_post_gatecha_dismiss_setup', array( __CLASS__, 'dismiss_setup' ) );
 	}
 
 	/**
@@ -68,31 +78,99 @@ class GateCHA_Cloud {
 	}
 
 	/**
+	 * The "Start free 30-day trial" button: a nonce-protected POST to start().
+	 *
+	 * @param string $class Button classes.
+	 */
+	private static function trial_button( $class = 'button button-primary' ) {
+		?>
+		<input type="hidden" name="action" value="gatecha_cloud_connect">
+		<?php wp_nonce_field( 'gatecha_cloud_connect' ); ?>
+		<button type="submit" class="<?php echo esc_attr( $class ); ?>"><?php esc_html_e( 'Start free 30-day trial', 'gatecha-captcha' ); ?></button>
+		<?php
+	}
+
+	/**
+	 * What clicking the trial button sends, and where.
+	 *
+	 * @return string Translated, unescaped sentence.
+	 */
+	private static function disclosure() {
+		return sprintf(
+			/* translators: %s: host name of the GateCHA Cloud service */
+			__( 'Clicking sends this site\'s address to %s to start the sign-up; nothing is sent before.', 'gatecha-captcha' ),
+			(string) wp_parse_url( self::base_url(), PHP_URL_HOST )
+		);
+	}
+
+	/**
 	 * The offer shown above the settings while no GateCHA server is set.
 	 */
 	public static function render_offer() {
 		?>
-		<div class="gatecha-cloud-offer">
+		<div class="gatecha-cloud-offer" id="gatecha-cloud-offer">
 			<h2><?php esc_html_e( 'No GateCHA server yet?', 'gatecha-captcha' ); ?></h2>
-			<p><?php esc_html_e( 'This plugin checks your forms through a GateCHA server. Host one yourself, free and open source, or let us host it for you.', 'gatecha-captcha' ); ?></p>
+			<p><?php esc_html_e( 'This plugin checks your forms through a GateCHA server. Let us host it for you, or host one yourself, free and open source.', 'gatecha-captcha' ); ?></p>
 			<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" class="gatecha-cloud-offer__actions">
-				<input type="hidden" name="action" value="gatecha_cloud_connect">
-				<?php wp_nonce_field( 'gatecha_cloud_connect' ); ?>
-				<button type="submit" class="button button-primary"><?php esc_html_e( 'Use GateCHA Cloud', 'gatecha-captcha' ); ?></button>
+				<?php self::trial_button(); ?>
 				<a class="button" href="https://gatecha.org/docs/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Host it yourself (free)', 'gatecha-captcha' ); ?></a>
 			</form>
+			<p class="gatecha-cloud-offer__nocard"><strong><?php esc_html_e( 'No card needed.', 'gatecha-captcha' ); ?></strong> <?php esc_html_e( 'Sign up in a minute and you come back here with everything filled in and your login and comments protected.', 'gatecha-captcha' ); ?></p>
 			<p class="description">
-				<?php esc_html_e( 'GateCHA Cloud is a paid service for businesses, hosted in France, with a free 30-day trial and no card needed. You come back here with everything filled in.', 'gatecha-captcha' ); ?>
-				<?php
-				printf(
-					/* translators: %s: host name of the GateCHA Cloud service */
-					esc_html__( 'Clicking sends this site\'s address to %s to start the sign-up; nothing is sent before.', 'gatecha-captcha' ),
-					esc_html( (string) wp_parse_url( self::base_url(), PHP_URL_HOST ) )
-				);
-				?>
+				<?php esc_html_e( 'GateCHA Cloud is a paid service for businesses after the trial, hosted in France.', 'gatecha-captcha' ); ?>
+				<?php echo esc_html( self::disclosure() ); ?>
 			</p>
 		</div>
 		<?php
+	}
+
+	/**
+	 * One-time notice on the Plugins screen and the Dashboard while no server
+	 * is set: until then the plugin protects nothing, and says so nowhere else.
+	 * Dismissed for good per administrator.
+	 */
+	public static function setup_notice() {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || ! in_array( $screen->id, array( 'plugins', 'dashboard' ), true ) ) {
+			return;
+		}
+		if ( ! current_user_can( 'manage_options' ) || GateCHA::$instance->is_configured() ) {
+			return;
+		}
+		if ( get_user_meta( get_current_user_id(), self::DISMISSED, true ) ) {
+			return;
+		}
+
+		$dismiss = wp_nonce_url( admin_url( 'admin-post.php?action=gatecha_dismiss_setup' ), 'gatecha_dismiss_setup' );
+		?>
+		<div class="notice notice-info gatecha-setup-notice">
+			<p>
+				<strong><?php esc_html_e( 'GateCHA CAPTCHA is not protecting any form yet.', 'gatecha-captcha' ); ?></strong>
+				<?php esc_html_e( 'It needs a GateCHA server: start a free 30-day GateCHA Cloud trial, no card needed, or use your own server.', 'gatecha-captcha' ); ?>
+			</p>
+			<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
+				<p>
+					<?php self::trial_button(); ?>
+					<a class="button" href="<?php echo esc_url( self::settings_url() ); ?>"><?php esc_html_e( 'Use my own server', 'gatecha-captcha' ); ?></a>
+					&nbsp;<a href="<?php echo esc_url( $dismiss ); ?>"><?php esc_html_e( 'Dismiss', 'gatecha-captcha' ); ?></a>
+				</p>
+			</form>
+			<p class="description"><?php echo esc_html( self::disclosure() ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Hide the setup notice for this administrator, for good.
+	 */
+	public static function dismiss_setup() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You are not allowed to do this.', 'gatecha-captcha' ), 403 );
+		}
+		check_admin_referer( 'gatecha_dismiss_setup' );
+		update_user_meta( get_current_user_id(), self::DISMISSED, 1 );
+		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url() );
+		exit;
 	}
 
 	/**
@@ -166,7 +244,23 @@ class GateCHA_Cloud {
 		update_option( GateCHA::$option_url, untrailingslashit( $url ) );
 		update_option( GateCHA::$option_api_key, $api );
 		update_option( GateCHA::$option_stats_token, $token );
+		self::protect_defaults();
 		self::finish( 'connected' );
+	}
+
+	/**
+	 * Protect the login and comments right away, so a new connection does
+	 * something before the admin has picked anything. Only ever switches forms
+	 * on: a choice already saved is left as it is.
+	 */
+	private static function protect_defaults() {
+		$options = array( GateCHA::$option_wp_login, GateCHA::$option_wp_comments );
+		if ( gatecha_plugin_active( 'woocommerce' ) ) {
+			$options[] = GateCHA::$option_wc_login;
+		}
+		foreach ( $options as $option ) {
+			update_option( $option, 1 );
+		}
 	}
 
 	/**
@@ -192,7 +286,7 @@ class GateCHA_Cloud {
 		// phpcs:enable
 
 		$messages = array(
-			'connected'   => __( 'Connected to GateCHA Cloud. Choose below which forms to protect, then save.', 'gatecha-captcha' ),
+			'connected'   => __( 'Connected to GateCHA Cloud. Your login and comments are protected from now on. Tick any other form to protect below, then save.', 'gatecha-captcha' ),
 			'state'       => __( 'The connection could not be confirmed: it expired, or was started from another browser. Start again.', 'gatecha-captcha' ),
 			'unreachable' => __( 'GateCHA Cloud could not be reached to finish the connection. Start again in a few minutes, or paste the values from your confirmation email.', 'gatecha-captcha' ),
 			'exchange'    => __( 'GateCHA Cloud did not confirm the connection. Start again, or paste the values from your confirmation email.', 'gatecha-captcha' ),
